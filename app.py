@@ -41,7 +41,7 @@ def register():
             cursor.close()
             conn.close()
 
-    return render_template("register.html")  # Renders the registration page
+    return render_template("register.html")  # Correct path to the template
 
 # Route for Login (GET method renders login page)
 @app.route("/login", methods=["GET", "POST"])
@@ -54,7 +54,7 @@ def login():
         if not username or not password:
             return jsonify({"error": "Username and password are required!"}), 400
 
-        # Connect to the database and check user credentials (without password hashing)
+        # Connect to the database and check user credentials
         conn = get_db_connection()
         cursor = conn.cursor()
 
@@ -65,18 +65,19 @@ def login():
         conn.close()
 
         if user:
-            # Get the stored password from the database
             stored_password = user[2]  # Assuming password is stored in the 3rd column
 
-            # Check if the password matches
             if password == stored_password:
-                return jsonify({"message": "Login successful!"}), 200
+                return jsonify({
+                    "message": "Login successful!",
+                    "redirect": "https://expense-tracker-three-liard.vercel.app/"
+                }), 200
             else:
-                return jsonify({"error": "Invalid password!"}), 401
+                return jsonify({"error": "Invalid password!"}), 401  # Fixed issue here
         else:
-            return jsonify({"error": "User not found!"}), 401
+            return jsonify({"error": "User not found!"}), 401  # Fixed issue here
 
-    return render_template("login.html")  # Renders the login page
+    return render_template("login.html")
 
 # Running the app
 if __name__ == "__main__":
